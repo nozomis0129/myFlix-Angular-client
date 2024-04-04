@@ -4,8 +4,8 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-
 const apiUrl = "https://movies-flix-app-bb16fed0a4c0.herokuapp.com/";
+
 @Injectable({
   providedIn: 'root'
 })
@@ -42,7 +42,7 @@ export class FetchApiDataService {
   }
 
   // Non-typed response extraction
-  private extractResponseData(res: Response): any {
+  private extractResponseData(res: Response | Object): any {
     const body = res;
     return body || {};
   }
@@ -60,9 +60,9 @@ export class FetchApiDataService {
     );
   }
 
-  getDirector(): Observable<any> {
+  getDirector(name: any): Observable<any> {
     const token = localStorage.getItem('token');
-    return this.http.get(apiUrl + 'movies/directors/:Name', {
+    return this.http.get(apiUrl + 'movies/directors/' + name, {
       headers: new HttpHeaders(
         {
           Authorization: 'Bearer ' + token,
@@ -73,9 +73,9 @@ export class FetchApiDataService {
     );
   }
 
-  getGenre(): Observable<any> {
+  getGenre(name: any): Observable<any> {
     const token = localStorage.getItem('token');
-    return this.http.get(apiUrl + 'movies/genre/:Name', {
+    return this.http.get(apiUrl + 'movies/genre/' + name, {
       headers: new HttpHeaders(
         {
           Authorization: 'Bearer ' + token,
