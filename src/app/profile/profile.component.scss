@@ -1,0 +1,34 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile {
+  min-width: 380px;
+  width: 80%;
+  margin-top: 20px;
+}
+
+.update-form {
+  min-width: 380px;
+  width: 80%;
+  margin-top: 20px;
+}
+
+.form-inputs {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.actions button {
+  width: 15%;
+  margin-left: 10px;
+}
+
+.fav-movies {
+  width: 100%;
+}

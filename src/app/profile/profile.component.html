@@ -1,0 +1,122 @@
+<app-navbar></app-navbar>
+<div class="profile-container">
+  
+    <mat-card class="profile">
+      <mat-card-content>
+        <p>Usename: {{userData.Username}}</p>
+        <p>Email: {{userData.Email}}</p>
+        <p>Birthday: {{userData.Birthday | date:'longDate'}}</p>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="update-form">
+      <mat-card-header>
+        <mat-card-title>Update Profile</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form>
+          <label>Username:</label>
+          <mat-form-field class="form-inputs">
+            <input
+            matInput
+            [(ngModel)]="userData.Username"
+            placeholder="Username"
+            type="text"
+            name="Username"
+            required
+            >
+          </mat-form-field>
+          <label>Email:</label>
+          <mat-form-field class="form-inputs">
+            <input
+            matInput
+            [(ngModel)]="userData.Email"
+            placeholder="Email"
+            type="email"
+            name="Email"
+            required
+            >
+          </mat-form-field>
+          <label>Birthday:</label>
+          <mat-form-field class="form-inputs">
+            <input
+            matInput
+            [(ngModel)]="userData.Birthday"
+            placeholder="Birthday"
+            type="date"
+            name="Birthday"
+            required
+            >
+          </mat-form-field>
+        </form>
+        <mat-card-actions class="actions">
+          <button
+          mat-raised-button
+          class="button-profile"
+          color="warn"
+          (click)="deleteUser()"
+          >
+            Delete
+          </button>
+          <button
+          mat-raised-button
+          class="button-profile"
+          color="primary"
+          (click)="updateUser()"
+          type="submit"
+          >
+            Update
+          </button>
+        </mat-card-actions>
+      </mat-card-content>
+    </mat-card>
+  
+
+  <div class="fav-mov-cards">
+    <div>
+      <h3>Favorite Movies</h3>
+      <div *ngIf="FavoriteMovies.length === 0" style="font-size: 18px;">
+        <p>No Favorite Movies</p>
+      </div>
+    </div>
+    
+    <div>
+
+    </div>
+    <mat-card *ngFor="let movie of FavoriteMovies;" class="fav-movies">
+      <img mat-card-image src={{movie.ImagePath}} alt= {{movie.Title}} />
+      <mat-card-actions>
+          <button
+              mat-button
+              color="primary"
+              (click)="openGenreDialog(movie.Genre.Name, movie.Genre.Description)"
+          >
+            Genre
+          </button>
+          <button
+              mat-button
+              color="primary"
+              (click)="openDirectorDialog(movie.Director.Name, movie.Director.Bio, movie.Director.Birth, movie.Director.Death)"
+          >
+            Director
+          </button>
+          <button
+              mat-button
+              color="primary"
+              (click)="openMovieDetailsDialog(movie.Description)"
+          >
+            Synopsis
+          </button>
+          <button
+          mat-icon-button
+          color="primary"
+          (click)="deleteFavMovies(movie)">
+          <mat-icon color="primary">favorite</mat-icon>
+        </button>
+      </mat-card-actions>
+      <mat-card-header>
+        <mat-card-title>{{movie.Title}}</mat-card-title>
+        <mat-card-subtitle>Directored by: </mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </div>
+</div>
