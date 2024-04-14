@@ -17,9 +17,9 @@ import { MovieDetailsComponent } from '../movie-details/movie-details.component'
 export class ProfileComponent implements OnInit {
   @Input() userData = { Username: "", Email: "", Birthday: "", FavoriteMovies: [] };
 
+  movies: any[] = [];
   user: any = {};
   FavoriteMovies: any[] = [];
-  movies: any[] = [];
 
   constructor(
     public fetchApiData: FetchApiDataService,
@@ -47,7 +47,7 @@ export class ProfileComponent implements OnInit {
   updateUser(): void {
     this.fetchApiData.editUser(this.userData).subscribe((result) => {
       console.log('User update successful', result);
-      localStorage.setItem('uer', JSON.stringify(result));
+      localStorage.setItem('user', JSON.stringify(result));
       this.snackBar.open('User update successful', 'OK', {
         duration: 2000
       });

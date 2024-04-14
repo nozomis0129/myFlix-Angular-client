@@ -17,7 +17,7 @@ export class MovieCardComponent implements OnInit {
   user: any = {};
   userData = { Username: "", FavoriteMovies: [] };
   FavoriteMovies: any[] = [];
-  isFavMovie: boolean = false;
+  isFavMovies: boolean = false;
 
   constructor(
     public fetchApiData: FetchApiDataService,
@@ -71,13 +71,13 @@ export class MovieCardComponent implements OnInit {
   }
 
   getFavMovies(): void {
-    this.user = this.fetchApiData.getUser();
-    this.userData.FavoriteMovies = this.user.FavoriteMovies;
-    this.FavoriteMovies = this.user.FavoriteMovies;
-    console.log('Fav Movies in getFavMovie', this.FavoriteMovies);
+    this.fetchApiData.getUser().subscribe((resp: any) => {
+      this.FavoriteMovies = resp.FavoriteMovies;
+      console.log('Fav Movies in getFavMovie', this.FavoriteMovies);
+    });
   }
 
-  isFav(movie: any): any {
+  isFavoriteMovie(movie: any): any {
     const MovieID = movie._id
     if (this.FavoriteMovies.some((movie) => movie === MovieID)) {
       return true;
@@ -87,7 +87,7 @@ export class MovieCardComponent implements OnInit {
   }
 
   toggleFav(movie: any): void {
-    const isFavorite = this.isFav(movie);
+    const isFavorite = this.isFavoriteMovie(movie);
     isFavorite
       ? this.deleteFavMovies(movie)
       : this.addFavMovies(movie);
