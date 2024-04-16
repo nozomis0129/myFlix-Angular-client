@@ -3,9 +3,9 @@
   
     <mat-card class="profile">
       <mat-card-content>
-        <p>Usename: {{userData.Username}}</p>
-        <p>Email: {{userData.Email}}</p>
-        <p>Birthday: {{userData.Birthday | date:'longDate'}}</p>
+        <p>Usename: {{user.Username}}</p>
+        <p>Email: {{user.Email}}</p>
+        <p>Birthday: {{user.Birthday | date:'longDate'}}</p>
       </mat-card-content>
     </mat-card>
     <mat-card class="update-form">
@@ -18,7 +18,7 @@
           <mat-form-field class="form-inputs">
             <input
             matInput
-            [(ngModel)]="userData.Username"
+            [(ngModel)]="user.Username"
             placeholder="Username"
             type="text"
             name="Username"
@@ -29,7 +29,7 @@
           <mat-form-field class="form-inputs">
             <input
             matInput
-            [(ngModel)]="userData.Email"
+            [(ngModel)]="user.Email"
             placeholder="Email"
             type="email"
             name="Email"
@@ -40,7 +40,7 @@
           <mat-form-field class="form-inputs">
             <input
             matInput
-            [(ngModel)]="userData.Birthday"
+            [(ngModel)]="user.Birthday"
             placeholder="Birthday"
             type="date"
             name="Birthday"
@@ -74,12 +74,16 @@
   <div class="fav-mov-cards">
     <div>
       <h3>Favorite Movies</h3>
-      <div *ngIf="FavoriteMovies.length === 0" style="font-size: 18px;">
+      <div *ngIf="FavoriteMovies.length === 0" style="font-size: 18px; flex: 1 1 auto;">
         <p>No Favorite Movies</p>
       </div>
     </div>
     
     <mat-card *ngFor="let movie of FavoriteMovies;" class="fav-movies">
+      <mat-card-header>
+        <mat-card-title>{{movie.Title}}</mat-card-title>
+        <mat-card-subtitle>Directored by: </mat-card-subtitle>
+      </mat-card-header>
       <img mat-card-image src={{movie.ImagePath}} alt= {{movie.Title}} />
       <mat-card-actions>
           <button
@@ -106,14 +110,12 @@
           <button
           mat-icon-button
           color="primary"
-          (click)="deleteFavMovies(movie)">
-          <mat-icon color="primary">favorite</mat-icon>
+          (click)="deleteFavMovies(movie._id)"
+          [ngClass]="isFav(movie._id) ? 'mat-flat-button' : 'mat-icon-button'"
+          >
+          <mat-icon color="primary">{{ isFav(movie._id) ? 'favorite' : 'favorite_border' }}</mat-icon>
         </button>
       </mat-card-actions>
-      <mat-card-header>
-        <mat-card-title>{{movie.Title}}</mat-card-title>
-        <mat-card-subtitle>Directored by: </mat-card-subtitle>
-      </mat-card-header>
     </mat-card>
   </div>
 </div>

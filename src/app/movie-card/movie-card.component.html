@@ -30,9 +30,11 @@
         >
           Synopsis
         </button>
-        <button mat-icon-button style="width: auto;" color="primary"  (click)="toggleFav(movie)">
-          <mat-icon *ngIf="!isFavoriteMovie(movie)" style="transform: scale(1.5);" color="primary">favorite_border</mat-icon>
-          <mat-icon *ngIf="isFavoriteMovie(movie)" style="transform: scale(1.5);" color="primary">favorite</mat-icon>
+        <button
+          mat-icon-button
+          (click)="isFavoriteMovie(movie._id) ? removeFavoriteMovies(movie._id) : addToFavorites(movie._id)"
+          [ngClass]="isFavoriteMovie(movie._id) ? 'mat-flat-button' : 'mat-icon-button'">
+          <mat-icon>{{ isFavoriteMovie(movie._id) ? 'favorite' : 'favorite_border' }}</mat-icon>
         </button>
       </mat-card-actions>
   </mat-card>

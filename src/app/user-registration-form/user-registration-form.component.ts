@@ -1,3 +1,4 @@
+// src/app/user-registration-form/user-registration-form.component.ts
 import { Component, OnInit, Input, Inject } from '@angular/core';
 
 // Close the dialog on success
@@ -8,8 +9,15 @@ import { FetchApiDataService } from '../fetch-api-data.service';
 
 // Display notifications back to the user
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { response } from 'express';
 
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+/**
+* @description Component representing the user registration form.
+* @selector 'app-user-registration-form'
+* @templateUrl './user-registration-form.component.html'
+* @styleUrls ['./user-registration-form.component.scss']
+*/
 
 @Component({
   selector: 'app-user-registration-form',
@@ -21,10 +29,19 @@ export class UserRegistrationFormComponent implements OnInit {
 
   token: any = localStorage.getItem('token');
 
+  /**
+    * @constructor
+    * @param {FetchApiDataService} fetchApiData - Service for user registration API calls.
+    * @param {MatDialogRef<UserRegistrationFormComponent>} dialogRef - Reference to the dialog for closing.
+    * @param {MatSnackBar} snackBar - Angular Material's MatSnackBar service for notifications.
+    */
+
   constructor(
     public fetchApiData: FetchApiDataService,
     public dialogRef: MatDialogRef<UserRegistrationFormComponent>,
-    public snackBar: MatSnackBar) { }
+    public snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: { title: string, button: string, function: string },
+  ) { }
 
   ngOnInit(): void {
     if (this.token !== null) {
@@ -33,6 +50,11 @@ export class UserRegistrationFormComponent implements OnInit {
       console.log(this.userData);
     }
   }
+
+  /**
+    * @description Sends user registration form information to the backend.
+    * Closes the dialog on success and displays a success message. Shows an error message on failure.
+    */
 
   // This is the function responsible for sending the form inputs to the backend
   registerUser(): void {
@@ -50,6 +72,14 @@ export class UserRegistrationFormComponent implements OnInit {
       });
     });
   }
+
+  /**
+     * This method will update the user's data
+     * @returns user's data
+     * @returns updated user's data saved to local storage
+     * @returns user notified of success
+     * @returns user notified of error
+     */
 
   updateUser(): void {
     this.fetchApiData.editUser(this.userData).subscribe((response) => {

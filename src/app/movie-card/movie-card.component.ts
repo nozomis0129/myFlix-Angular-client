@@ -7,17 +7,37 @@ import { GenreComponent } from '../genre/genre.component';
 import { DirectorComponent } from '../director/director.component';
 import { MovieDetailsComponent } from '../movie-details/movie-details.component';
 
+/**
+ * @description Component representing the movie card.
+ * @selector 'app-movie-card'
+ * @templateUrl './movie-card.component.html'
+ * @styleUrls ['./movie-card.component.scss']
+ */
+
 @Component({
   selector: 'app-movie-card',
   templateUrl: './movie-card.component.html',
   styleUrls: ['./movie-card.component.scss']
 })
+
 export class MovieCardComponent implements OnInit {
+
+  /** The movie data displayed in the card. */
   movies: any[] = [];
   user: any = {};
   userData = { Username: "", FavoriteMovies: [] };
-  FavoriteMovies: any[] = [];
+  favorites: any[] = [];
   isFavMovies: boolean = false;
+
+  //user = JSON.parse(localStorage.getItem('user') || '');
+
+  /**
+    * @constructor
+    * @param {FetchApiDataService} fetchApiData - Service for handling shared data between components.
+    * @param {MatDialog} dialog - Angular Material's MatDialog service for opening dialogs.
+    * @param {MatSnackBar} snackBar - Angular Material's MatSnackBar service for notifications.  
+    * @param {Router} router - Angular's Router service for navigation.
+    */
 
   constructor(
     public fetchApiData: FetchApiDataService,
@@ -27,17 +47,96 @@ export class MovieCardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getMovies();
-    this.getFavMovies();
+    this.getAllMovies();
+    this.getFavorites();
   }
 
-  getMovies(): void {
+  /**
+  * This will get all movies from the API
+  * @returns movies
+  */
+
+  getAllMovies(): void {
     this.fetchApiData.getAllMovies().subscribe((resp: any) => {
       this.movies = resp;
       console.log(this.movies);
       return this.movies;
     });
   }
+
+  /** 
+   * Get user info and set favorites
+   * @returns favorite movies selected by user
+   * */
+
+  getFavorites(): void {
+    this.fetchApiData.getUser().subscribe(
+      (resp: any) => {
+        if (resp.user && resp.user.FavoriteMovies) {
+          this.favorites = resp.user.FavoriteMovies;
+        } else {
+          this.favorites = [];
+        }
+      },
+      (error: any) => {
+        console.error('Error fetching user data:', error);
+        this.favorites = [];
+      }
+    );
+  }
+
+  /**
+    * Check if a movie is a user's favorite already
+    * @param movieID
+    * @returns boolean
+    * */
+
+  isFavoriteMovie(movieID: string): boolean {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user.FavoriteMovies.indexOf(movieID) >= 0;
+  }
+
+  /**
+   * Add a movie to a user's favorites 
+   * Or remove on click if it is already a favorite
+   * @param id 
+   * @returns success message
+   * */
+
+  addToFavorites(id: string): void {
+    if (this.isFavoriteMovie(id)) {
+      // Movie is already a favorite, so remove it
+      this.removeFavoriteMovies(id);
+    } else {
+      // Movie is not a favorite, so add it
+      this.fetchApiData.addFavoriteMovies(id).subscribe(() => {
+        this.snackBar.open('Movie added to favorites', 'OK', {
+          duration: 2000,
+        });
+        this.getFavorites();
+      });
+    }
+  }
+
+  /**
+  * This will remove movie from user's favorite list
+  * @param id 
+  * @returns suceess message
+  * */
+
+  removeFavoriteMovies(id: string): void {
+    this.fetchApiData.deleteFavoriteMovie(id).subscribe(() => {
+      this.snackBar.open('Movie has been deleted from your favorites!', 'OK', {
+        duration: 2000,
+      })
+    });
+  }
+
+  /** 
+ * Open director information from DirectorComponent
+ * @param director (name, bio, birth, death)
+ * @returns director name, bio, birth
+ * */
 
   openDirectorDialog(name: string, bio: string, birth: string, death: string): void {
     this.dialog.open(DirectorComponent, {
@@ -51,6 +150,12 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
+  /** 
+   *  Open genre information from GenreComponent 
+   * @param genre (name, description)
+   * @returns genres name and details
+   * */
+
   openGenreDialog(name: string, description: string): void {
     this.dialog.open(GenreComponent, {
       data: {
@@ -61,6 +166,11 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
+  /** Open movie description from MovieDetailsComponent
+  * @param description
+  * @returns movie Title, Description
+  * */
+
   openMovieDetailsDialog(description: string): void {
     this.dialog.open(MovieDetailsComponent, {
       data: {
@@ -70,50 +180,4 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
-  getFavMovies(): void {
-    this.fetchApiData.getUser().subscribe((resp: any) => {
-      this.FavoriteMovies = resp.FavoriteMovies;
-      console.log('Fav Movies in getFavMovie', this.FavoriteMovies);
-    });
-  }
-
-  isFavoriteMovie(movie: any): any {
-    const MovieID = movie._id
-    if (this.FavoriteMovies.some((movie) => movie === MovieID)) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  toggleFav(movie: any): void {
-    const isFavorite = this.isFavoriteMovie(movie);
-    isFavorite
-      ? this.deleteFavMovies(movie)
-      : this.addFavMovies(movie);
-  }
-
-  addFavMovies(movie: any): void {
-    this.user = this.fetchApiData.getUser();
-    this.userData.Username = this.user.Username;
-    this.fetchApiData.addFavoriteMovies(movie).subscribe((result) => {
-      localStorage.setItem('user', JSON.stringify(result));
-      this.getFavMovies();
-      this.snackBar.open('Movie has been added to your favorites!', 'OK', {
-        duration: 3000,
-      });
-    });
-  }
-
-  deleteFavMovies(movie: any): void {
-    this.user = this.fetchApiData.getUser();
-    this.userData.Username = this.user.Username;
-    this.fetchApiData.deleteFavoriteMovie(movie).subscribe((result) => {
-      localStorage.setItem('user', JSON.stringify(result));
-      this.getFavMovies();
-      this.snackBar.open('Movie has been deleted from your favorites!', 'OK', {
-        duration: 3000,
-      });
-    });
-  }
 }
