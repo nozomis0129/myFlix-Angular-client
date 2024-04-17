@@ -1,5 +1,6 @@
-# MyFlixAngularClient
+# MyFlix Angular Client
 
+Welcome to the MyFlix Angular Client, a single-page, responsive movie app built with Angular, with routing and several interface views. The information about movies including genre, synopsis, and director will be shown after login. User can sign up and update their information and create a lost of their favorite movies.
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.2.
 
 ## Development server
